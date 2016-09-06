@@ -246,7 +246,7 @@ static pthread_mutex_t pinMutex ;
 
 // Debugging & Return codes
 
-int wiringPiDebug       = FALSE ;
+int wiringPiDebug       = TRUE ;
 int wiringPiReturnCodes = FALSE ;
 
 // sysFds:
@@ -573,7 +573,8 @@ static uint8_t gpioToClkDiv [] =
 //
 #define ODROIDC_GPIO_MASK (0xFFFFFF80)
 
-#define ODROIDC_PERI_BASE 0xC1100000
+//#define ODROIDC_PERI_BASE 0xC1100000
+#define ODROIDC_PERI_BASE 0x209c000 // sudo cat /sys/kernel/debug/gpio
 #define GPIO_REG_OFFSET   0x8000
 #define ODROID_GPIO_BASE  (ODROIDC_PERI_BASE + GPIO_REG_OFFSET)
 
@@ -1431,7 +1432,11 @@ void piBoardId (int *model, int *rev, int *mem, int *maker, int *overVolted)
     *model = PI_MODEL_ODROIDC2; *mem = 2048;  *maker = PI_MAKER_HARDKERNEL;
     *rev = piBoardRev ();
   }
+  else if (strcmp (c, "3011") == 0) { // GK802
+    *model = PI_MODEL_ODROIDC;  *rev = PI_VERSION_1;  *mem = 1024;  *maker = PI_MAKER_HARDKERNEL;
+  }
   else  {
+    printf ("piboardId: model string: %s\n", c) ;
     *model = 0; *rev = 0; *mem = 0; *maker = 0 ;
   }
   piModel = *model;
